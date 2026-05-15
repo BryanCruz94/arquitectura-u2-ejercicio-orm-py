@@ -11,3 +11,19 @@ repositorio = RepositorioPaper()
 def obtener_todos():
     papers = repositorio.obtener_todos()
     return jsonify([paper.get_diccionario() for paper in papers])
+
+@paper_bp.post("/")
+def crear():
+    datos = request.get_json()
+    if not datos or not datos.get("doi") or not datos.get("titulo") or not datos.get("id_autor"):
+        return jsonify({"Mensaje":"Verificar los datos de entrada para registrar"})
+    paper = Paper(
+        titulo = datos["titulo"],
+        doi = datos["doi"],
+        id_autor = datos["id_autor"]        
+    )
+    
+    repositorio.crear(paper)
+    
+    return jsonify(paper.get_diccionario), 201
+
